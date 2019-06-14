@@ -30,11 +30,12 @@ podman login quay.io
 +
 This will build and push the image to the *Quay.io* registry.
 
-. In your Terminal Project edit the `terminal` deployment to point to the new image
+. In your Terminal Project edit the `terminal` deployment to point to the new image making sure to update the VERSION to the latest tag.
 +
 [source,sh]
 ----
-oc edit deployment terminal -n terminal
+VERSION=0.20
+oc set env deployment terminal TERMINAL_IMAGE=quay.io/gpte-devops-automation/clientvm-terminal:${VERSION}
 ----
 
 . If you are experimenting with new images make sure to update the version number in the buildah script every time. Also make sure to delete the terminal-terminal-<userid> pod and persistent volume claim for a fresh environment.
