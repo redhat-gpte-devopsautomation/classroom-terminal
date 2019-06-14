@@ -1,0 +1,40 @@
+== OpenTLC Classroom Terminal Image
+
+This classroom terminal image builds on top of the ocp-workshop terminal image and adds a few customizations. Mainly Ansible and the OpenShift modules as well as Git bash Prompt and a more recent version of ODO.
+
+=== Building the image
+
+. Clone this repository on a Linux machine that has `buildah` and `podman` installed. Red Hat Enterprise Linux 7 is preferred.
++
+As `root` make sure that `buildah` and `podman` are installed, then clone the repo.
++
+[source,sh]
+----
+sudo -i
+yum -y install buildah podman
+cd $HOME
+git clone https://github.com/redhat-gpte-devopsautomation/classroom-terminal.git
+cd $HOME/classroom-terminal
+----
+
+. If the FTL version (which is not working yet because it needs sudo) needs to be updated, update the file `requirements.yml`.
+
+. Log into the *Quay.io* registry with an account that can push to the `gpte-devops-automation` repository. If you want to use your own repository update the the last two commands in the script `buildah.sh` to commit and push the correct image name.
+Run the `buildah` script:
++
+[source,sh]
+----
+podman login quay.io
+./buildah.sh
+----
++
+This will build and push the image to the *Quay.io* registry.
+
+. In your Terminal Project edit the `terminal` deployment to point to the new image
++
+[source,sh]
+----
+oc edit deployment terminal -n terminal
+----
+
+. If you are experimenting with new images make sure to update the version number in the buildah script every time. Also make sure to delete the terminal-terminal-<userid> pod and persistent volume claim for a fresh environment.

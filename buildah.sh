@@ -1,19 +1,20 @@
 #!/bin/bash
 
-# Remove any previous working container
-buildah rm clientvm
-
-# FROM Image
-buildah from --name clientvm docker://quay.io/openshiftlabs/workshop-terminal:2.8.0
-
 # Version/Date
-CLIENTVM_VERSION=0.3
+CLIENTVM_VERSION=0.20
+TERMINAL_TAG=2.8.0
 BUILD_DATE=`date "+DATE: %Y-%m-%d%n"`
 
 # Software Versions
 # OpenShift Client is already in the base image
 ODO_VERSION=v1.0.0-beta2
 S2I_LOCATION=https://github.com/openshift/source-to-image/releases/download/v1.1.14/source-to-image-v1.1.14-874754de-linux-amd64.tar.gz
+
+# Remove any previous working container
+buildah rm clientvm
+
+# FROM Image
+buildah from --name clientvm docker://quay.io/openshiftlabs/workshop-terminal:${TERMINAL_TAG}
 
 #
 # Set image annotations
@@ -32,8 +33,6 @@ buildah run clientvm -- yum -y update
 buildah run clientvm -- yum -y install \
   ansible \
   skopeo \
-  buildah \
-  podman \
   wget \
   nano \
   vim
@@ -44,23 +43,29 @@ buildah run clientvm -- yum clean all
 buildah run clientvm -- rm -rf /tmp/src/.git*
 
 # Set up Git Bash Prompt
-buildah run clientvm -- ansible --connection=local all -i localhost, -m git -a"repo=https://github.com/magicmonty/bash-git-prompt.git dest=/tmp/src/.bash-git-prompt clone=yes"
+buildah run clientvm -- ansible --connection=local all -i localhost, -m git -a"repo=https://github.com/magicmonty/bash-git-prompt.git dest=/opt/app-root/src/.bash-git-prompt clone=yes"
 buildah copy --chown 1001:0 clientvm bashrc /tmp/src/.bashrc
+buildah run clientvm -- bash -c "cat /tmp/src/.bashrc >> /opt/app-root/src/.bash_profile"
+buildah run clientvm -- rm /tmp/src/.bashrc
 
 # Set up newer version of odo
-buildah run clientvm -- ansible --connection=local all -i localhost, -m get_url -a"url=https://github.com/openshift/odo/releases/download/${ODO_VERSION}/odo-linux-amd64 dest=/tmp/src/odo owner=1001 group=root mode=0775 force=yes"
+buildah run clientvm -- ansible --connection=local all -i localhost, -m get_url -a"url=https://github.com/openshift/odo/releases/download/${ODO_VERSION}/odo-linux-amd64 dest=/opt/app-root/bin/odo owner=1001 group=root mode=0775 force=yes"
 
 # Set up S2I
-buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=${S2I_LOCATION} remote_src=yes dest=/tmp/src owner=root group=root mode=0755 extra_opts='--strip=1'"
+buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=${S2I_LOCATION} remote_src=yes dest=/opt/app-root/bin owner=root group=root mode=0755 extra_opts='--strip=1'"
 
-# Install FTL
-# TBD
-
+# Set up Python libraries and FTL
+buildah run clientvm -- pip install openshift
+buildah copy --chown 1001:0 clientvm requirements.yml /tmp/src/requirements.yml
+buildah run clientvm -- ansible-galaxy install -r /tmp/src/requirements.yml
+buildah run clientvm -- rm /tmp/src/requirements.yml
+buildah copy --chown 1001:0 clientvm install_ftl.yml /tmp/src/install_ftl.yml
+buildah run clientvm -- ansible-playbook --connection=local -i localhost, /tmp/src/install_ftl.yml
 
 # Fix Permissions
-buildah run clientvm -- chown -R 1001:0 /tmp/src
-buildah run clientvm -- chgrp -R 0 /tmp/src
-buildah run clientvm -- chmod -R g+w /tmp/src
+buildah run clientvm -- chown -R 1001:0 /opt/app-root
+buildah run clientvm -- chgrp -R 0 /opt/app-root
+buildah run clientvm -- chmod -R g+w /opt/app-root
 buildah run clientvm -- fix-permissions /opt/app-root
 
 buildah run clientvm -- rm -rf /opt/app-root/src/.ansible
@@ -69,12 +74,6 @@ buildah run clientvm -- rm -rf /opt/app-root/src/.ansible
 # Define container settings
 #
 buildah config --user 1001 clientvm
-
-#
-# Run S2I Assemble
-# 
-
-buildah run clientvm -- /usr/libexec/s2i/assemble
 
 #
 # Commit this container to an image name and tag
