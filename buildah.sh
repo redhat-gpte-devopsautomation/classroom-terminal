@@ -57,10 +57,10 @@ buildah run clientvm -- ansible --connection=local all -i localhost, -m get_url 
 buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=${S2I_LOCATION} remote_src=yes dest=/opt/app-root/bin owner=root group=root mode=0755 extra_opts='--strip=1'"
 
 # Set up newer version of kubefedctl (KubeFed V2 CLI)
-buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=https://github.com/kubernetes-sigs/kubefed/releases/download/v${KUBEFEDCTL_VERSION}/kubefedctl-${KUBEFEDCTL_VERSION}-linux-amd64.tgz dest=/opt/app-root/bin/odo owner=1001 group=root mode=0775 remote_src: yes"
+buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=https://github.com/kubernetes-sigs/kubefed/releases/download/v${KUBEFEDCTL_VERSION}/kubefedctl-${KUBEFEDCTL_VERSION}-linux-amd64.tgz remote_src=yes dest=/opt/app-root/bin owner=root group=root mode=0775 extra_opts='--strip=1'"
 
 # Set up newer version of tkn (OpenShift Pipelines CLI)
-buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=https://github.com/tektoncd/cli/releases/download/v${TKN_VERSION}/tkn_${TKN_VERSION}_Linux_x86_64.tar.gz dest=/opt/app-root/bin/odo owner=1001 group=root mode=0775 remote_src: yes"
+buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=https://github.com/tektoncd/cli/releases/download/v${TKN_VERSION}/tkn_${TKN_VERSION}_Linux_x86_64.tar.gz remote_src=yes dest=/opt/app-root/bin owner=1001 group=root mode=0775 extra_opts='--strip=1'"
 
 # Set up Python libraries and FTL
 buildah run clientvm -- pip install openshift
