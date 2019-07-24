@@ -7,7 +7,7 @@ BUILD_DATE=`date "+DATE: %Y-%m-%d%n"`
 
 # Software Versions
 # OpenShift Client is already in the base image
-ODO_VERSION=v1.0.0-beta2
+ODO_VERSION=v1.0.0-beta3
 TKN_VERSION=0.1.2
 KUBEFEDCTL_VERSION=0.1.0-rc3
 S2I_LOCATION=https://github.com/openshift/source-to-image/releases/download/v1.1.14/source-to-image-v1.1.14-874754de-linux-amd64.tar.gz
