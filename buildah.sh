@@ -2,13 +2,18 @@
 
 # Version/Date
 CLIENTVM_VERSION=0.20
-TERMINAL_TAG=2.8.0
+TERMINAL_TAG=2.10.2
 BUILD_DATE=`date "+DATE: %Y-%m-%d%n"`
 
 # Software Versions
 # OpenShift Client is already in the base image
 ODO_VERSION=v1.0.0-beta2
+TKN_VERSION=0.1.2
+KUBEFEDCTL_VERSION=0.1.0-rc3
 S2I_LOCATION=https://github.com/openshift/source-to-image/releases/download/v1.1.14/source-to-image-v1.1.14-874754de-linux-amd64.tar.gz
+
+https://github.com/kubernetes-sigs/kubefed/releases/download/v${KUBEFEDCTL_VERSION}/kubefedctl-${KUBEFEDCTL_VERSION}-linux-amd64.tgz
+https://github.com/tektoncd/cli/releases/download/v${TKN_VERSION}/tkn_${TKN_VERSION}_Linux_x86_64.tar.gz
 
 # Remove any previous working container
 buildah rm clientvm
@@ -53,6 +58,12 @@ buildah run clientvm -- ansible --connection=local all -i localhost, -m get_url 
 
 # Set up S2I
 buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=${S2I_LOCATION} remote_src=yes dest=/opt/app-root/bin owner=root group=root mode=0755 extra_opts='--strip=1'"
+
+# Set up newer version of kubefedctl (KubeFed V2 CLI)
+buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=https://github.com/kubernetes-sigs/kubefed/releases/download/v${KUBEFEDCTL_VERSION}/kubefedctl-${KUBEFEDCTL_VERSION}-linux-amd64.tgz dest=/opt/app-root/bin/odo owner=1001 group=root mode=0775 remote_src: yes"
+
+# Set up newer version of tkn (OpenShift Pipelines CLI)
+buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=https://github.com/tektoncd/cli/releases/download/v${TKN_VERSION}/tkn_${TKN_VERSION}_Linux_x86_64.tar.gz dest=/opt/app-root/bin/odo owner=1001 group=root mode=0775 remote_src: yes"
 
 # Set up Python libraries and FTL
 buildah run clientvm -- pip install openshift
