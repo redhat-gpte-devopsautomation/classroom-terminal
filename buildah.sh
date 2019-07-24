@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Version/Date
-CLIENTVM_VERSION=0.20
+CLIENTVM_VERSION=0.30
 TERMINAL_TAG=2.10.2
 BUILD_DATE=`date "+DATE: %Y-%m-%d%n"`
 
@@ -89,6 +89,12 @@ buildah config --user 1001 clientvm
 buildah commit clientvm quay.io/gpte-devops-automation/clientvm-terminal:${CLIENTVM_VERSION}
 
 #
+# Also tag latest
+#
+buildah tag quay.io/gpte-devops-automation/clientvm-terminal:${CLIENTVM_VERSION} quay.io/gpte-devops-automation/clientvm-terminal:latest
+
+#
 # Push to Quay
 #
 podman push quay.io/gpte-devops-automation/clientvm-terminal:${CLIENTVM_VERSION}
+podman push quay.io/gpte-devops-automation/clientvm-terminal:latest
