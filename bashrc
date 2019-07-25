@@ -17,4 +17,4 @@ fi
 GIT_PROMPT_THEME=Evermeet
 GIT_PROMPT_SHOW_CHANGED_FILES_COUNT=1
 GIT_PROMPT_ONLY_IN_REPO=0
-source /opt/app-root/src/.bash-git-prompt/gitprompt.sh"
+source /opt/app-root/src/.bash-git-prompt/gitprompt.sh
