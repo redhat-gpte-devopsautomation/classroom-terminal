@@ -7,8 +7,7 @@ BUILD_DATE=`date "+DATE: %Y-%m-%d%n"`
 
 # Software Versions
 # OpenShift Client is already in the base image
-ODO_VERSION=v1.0.0-beta3
-TKN_VERSION=0.2.0
+TKN_VERSION=0.2.1
 KUBEFEDCTL_VERSION=0.1.0-rc3
 S2I_LOCATION=https://github.com/openshift/source-to-image/releases/download/v1.1.14/source-to-image-v1.1.14-874754de-linux-amd64.tar.gz
 
@@ -49,9 +48,6 @@ buildah run clientvm -- ansible --connection=local all -i localhost, -m git -a"r
 buildah copy --chown 1001:0 clientvm bashrc /tmp/src/.bashrc
 buildah run clientvm -- bash -c "cat /tmp/src/.bashrc >> /opt/app-root/src/.bash_profile"
 buildah run clientvm -- rm /tmp/src/.bashrc
-
-# Set up newer version of odo
-buildah run clientvm -- ansible --connection=local all -i localhost, -m get_url -a"url=https://github.com/openshift/odo/releases/download/${ODO_VERSION}/odo-linux-amd64 dest=/opt/app-root/bin/odo owner=1001 group=root mode=0775 force=yes"
 
 # Set up S2I
 buildah run clientvm -- ansible --connection=local all -i localhost, -m unarchive -a"src=${S2I_LOCATION} remote_src=yes dest=/opt/app-root/bin owner=root group=root mode=0755 extra_opts='--strip=1'"
