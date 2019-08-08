@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Version/Date
-CLIENTVM_VERSION=0.32
-TERMINAL_TAG=2.10.2
+CLIENTVM_VERSION=0.33
+TERMINAL_TAG=2.12.2
 BUILD_DATE=`date "+DATE: %Y-%m-%d%n"`
 
 # Software Versions
