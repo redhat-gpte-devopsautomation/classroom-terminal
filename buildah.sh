@@ -1,21 +1,21 @@
 #!/bin/bash
 
 # Version/Date
-CLIENTVM_VERSION=0.33
-TERMINAL_TAG=2.12.2
+CLIENTVM_VERSION=0.40
+TERMINAL_TAG=2.1.0
 BUILD_DATE=`date "+DATE: %Y-%m-%d%n"`
 
 # Software Versions
 # OpenShift Client is already in the base image
-TKN_VERSION=0.2.1
-KUBEFEDCTL_VERSION=0.1.0-rc3
+TKN_VERSION=0.2.2
+KUBEFEDCTL_VERSION=0.1.0-rc6
 S2I_LOCATION=https://github.com/openshift/source-to-image/releases/download/v1.1.14/source-to-image-v1.1.14-874754de-linux-amd64.tar.gz
 
 # Remove any previous working container
 buildah rm clientvm
 
 # FROM Image
-buildah from --name clientvm docker://quay.io/openshiftlabs/workshop-terminal:${TERMINAL_TAG}
+buildah from --name clientvm docker://quay.io/quay.io/openshifthomeroom/workshop-terminal:${TERMINAL_TAG}
 
 #
 # Set image annotations
