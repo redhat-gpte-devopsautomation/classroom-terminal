@@ -15,7 +15,7 @@ S2I_LOCATION=https://github.com/openshift/source-to-image/releases/download/v1.1
 buildah rm clientvm
 
 # FROM Image
-buildah from --name clientvm docker://quay.io/quay.io/openshifthomeroom/workshop-terminal:${TERMINAL_TAG}
+buildah from --name clientvm docker://quay.io/openshifthomeroom/workshop-homeroom:${TERMINAL_TAG}
 
 #
 # Set image annotations
