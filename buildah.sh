@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Version/Date
-CLIENTVM_VERSION=0.40
-TERMINAL_TAG=2.1.0
+CLIENTVM_VERSION=0.41
+TERMINAL_TAG=3.0.1
 BUILD_DATE=`date "+DATE: %Y-%m-%d%n"`
 
 # Software Versions
@@ -15,7 +15,7 @@ S2I_LOCATION=https://github.com/openshift/source-to-image/releases/download/v1.1
 buildah rm clientvm
 
 # FROM Image
-buildah from --name clientvm docker://quay.io/openshifthomeroom/workshop-homeroom:${TERMINAL_TAG}
+buildah from --name clientvm docker://quay.io/openshifthomeroom/workshop-terminal:${TERMINAL_TAG}
 
 #
 # Set image annotations
