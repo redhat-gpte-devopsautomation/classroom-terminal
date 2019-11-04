@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Version/Date
-CLIENTVM_VERSION=0.41
-TERMINAL_TAG=3.0.1
+CLIENTVM_VERSION=0.42
+TERMINAL_TAG=3.3.0
 BUILD_DATE=`date "+DATE: %Y-%m-%d%n"`
 
 # Software Versions
 # OpenShift Client is already in the base image
-TKN_VERSION=0.2.2
+TKN_VERSION=0.4.0
 KUBEFEDCTL_VERSION=0.1.0-rc6
 S2I_LOCATION=https://github.com/openshift/source-to-image/releases/download/v1.1.14/source-to-image-v1.1.14-874754de-linux-amd64.tar.gz
 
